@@ -1,4 +1,6 @@
+*.suo
 *.cache
+*.userprefs
 **/obj/*
 **/bin/*
-packages/*
+**/packages/**
