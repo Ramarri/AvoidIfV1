@@ -28,7 +28,6 @@ namespace AntiSwitch
         }
     }
 
-
     public interface IDomainLogic
     {
         bool Handles(string scheme);
@@ -81,7 +80,6 @@ namespace AntiSwitch
         }
     }
 
-
     public class AutoSmistatore
     {
         readonly Dictionary<string, IDomainLogic> _strategies;
@@ -103,7 +101,7 @@ namespace AntiSwitch
 
     public class ChainOfResponsibility
     {
-        readonly IEnumerable<IDomainLogic> _strategies;
+        private readonly IEnumerable<IDomainLogic> _strategies;
 
         public ChainOfResponsibility(List<IDomainLogic> strategies)
         {
@@ -112,10 +110,24 @@ namespace AntiSwitch
 
         public IDomainLogic Resolve(string scheme)
         {
-            foreach(var strategy in _strategies)
+            foreach (var strategy in _strategies)
             {
                 if (strategy.Handles(scheme))
                     return strategy;
-            }}
+            }
+
+            throw new MissingHandlerException(string.Format("{0} scheme has no handler", scheme));
+        }
+    }
+
+    public class MissingHandlerException : Exception
+    {
+        public MissingHandlerException(Exception ex)
+            : base(ex.Message, ex)
+        { }
+
+        public MissingHandlerException(string message)
+            : base(message)
+        { }
     }
 }
